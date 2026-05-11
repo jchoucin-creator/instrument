@@ -1,0 +1,235 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@400;500&display=swap');
+
+  .oa-root { font-family: 'DM Sans', sans-serif; padding: 2rem 1.5rem; }
+
+  .oa-hero { text-align: center; margin-bottom: 2.25rem; position: relative; }
+  .oa-hero .eyebrow { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 10px; }
+  .oa-hero h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--color-text-primary); margin: 0 0 6px; line-height: 1.2; }
+  .oa-hero .subtitle { font-size: 15px; color: var(--color-text-secondary); margin: 0 0 16px; font-style: italic; }
+  .pregunta { display: inline-block; background: #1D9E75; color: #E1F5EE; font-size: 14px; font-weight: 500; padding: 8px 18px; border-radius: 30px; }
+
+  .oa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 1.75rem; }
+
+  .oa-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1rem 0.85rem; cursor: pointer; transition: border-color 0.15s, background 0.15s; position: relative; overflow: hidden; }
+  .oa-card:hover { border-color: var(--color-border-secondary); background: var(--color-background-secondary); }
+  .oa-card.active { border-width: 2px; }
+
+  .oa-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .oa-badge { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+  .oa-name { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; }
+
+  .c-escolta .oa-badge { background: #E1F5EE; color: #0F6E56; }
+  .c-escolta .oa-name { color: #0F6E56; }
+  .c-escolta.active { border-color: #1D9E75; }
+  .c-escolta .oa-icon { color: #1D9E75; }
+
+  .c-analisi .oa-badge { background: #E6F1FB; color: #185FA5; }
+  .c-analisi .oa-name { color: #185FA5; }
+  .c-analisi.active { border-color: #378ADD; }
+  .c-analisi .oa-icon { color: #378ADD; }
+
+  .c-mapa .oa-badge { background: #EEEDFE; color: #534AB7; }
+  .c-mapa .oa-name { color: #534AB7; }
+  .c-mapa.active { border-color: #7F77DD; }
+  .c-mapa .oa-icon { color: #7F77DD; }
+
+  .c-respecte .oa-badge { background: #FAECE7; color: #993C1D; }
+  .c-respecte .oa-name { color: #993C1D; }
+  .c-respecte.active { border-color: #D85A30; }
+  .c-respecte .oa-icon { color: #D85A30; }
+
+  .c-creacio .oa-badge { background: #FAEEDA; color: #854F0B; }
+  .c-creacio .oa-name { color: #854F0B; }
+  .c-creacio.active { border-color: #BA7517; }
+  .c-creacio .oa-icon { color: #BA7517; }
+
+  .oa-icon { font-size: 18px; margin-bottom: 6px; }
+  .oa-text { font-size: 13px; color: var(--color-text-primary); line-height: 1.55; margin: 0; }
+
+  .detail-panel { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.1rem 1.25rem; margin-bottom: 1.75rem; min-height: 96px; transition: all 0.2s; }
+  .detail-panel .dp-hint { font-size: 13px; color: var(--color-text-tertiary); font-style: italic; }
+  .detail-panel .dp-badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
+  .detail-panel h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 6px; }
+  .detail-panel p { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 8px; line-height: 1.6; }
+  .detail-panel .dp-connects { font-size: 12px; color: var(--color-text-tertiary); }
+
+  .final-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .final-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.1rem; }
+  .final-card h4 { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 8px; }
+  .final-card p { font-size: 13px; color: var(--color-text-primary); margin: 0; line-height: 1.6; }
+  .final-card strong { font-weight: 500; }
+
+  @media (max-width: 460px) {
+    .final-row { grid-template-columns: 1fr; }
+    .oa-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<div class="oa-root">
+  <h2 class="sr-only" style="display:none">Presentació dels objectius d'aprenentatge — Sessió 1: Instruments d'arreu a casa nostra</h2>
+
+  <div class="oa-hero">
+    <div class="eyebrow">Sessió 1 · 2n d'ESO · Música</div>
+    <h1>Instruments d'arreu<br>a casa nostra</h1>
+    <p class="subtitle">Situació d'aprenentatge · 8 sessions</p>
+    <span class="pregunta">«Quins instruments del món sonen a casa nostra, i per què?»</span>
+  </div>
+
+  <div class="oa-grid" id="oaGrid">
+
+    <div class="oa-card c-escolta" onclick="showDetail(this, 'oa1')">
+      <div class="oa-card-top">
+        <div class="oa-badge">1</div>
+        <span class="oa-name">Escolta</span>
+      </div>
+      <i class="ti ti-ear oa-icon" aria-hidden="true"></i>
+      <p class="oa-text">Escoltar grups instrumentals d'altres cultures amb actitud atenta i respectuosa.</p>
+    </div>
+
+    <div class="oa-card c-analisi" onclick="showDetail(this, 'oa2')">
+      <div class="oa-card-top">
+        <div class="oa-badge">2</div>
+        <span class="oa-name">Identificació</span>
+      </div>
+      <i class="ti ti-music oa-icon" aria-hidden="true"></i>
+      <p class="oa-text">Reconèixer i identificar els instruments que sonen en cada grup escoltat.</p>
+    </div>
+
+    <div class="oa-card c-analisi" onclick="showDetail(this, 'oa3')">
+      <div class="oa-card-top">
+        <div class="oa-badge">3</div>
+        <span class="oa-name">Sonoritat</span>
+      </div>
+      <i class="ti ti-wave-sine oa-icon" aria-hidden="true"></i>
+      <p class="oa-text">Reconèixer estils i combinacions instrumentals característics de cada cultura.</p>
+    </div>
+
+    <div class="oa-card c-mapa" onclick="showDetail(this, 'oa4')">
+      <div class="oa-card-top">
+        <div class="oa-badge">4</div>
+        <span class="oa-name">Mapa</span>
+      </div>
+      <i class="ti ti-map-pin oa-icon" aria-hidden="true"></i>
+      <p class="oa-text">Localitzar en el mapamundi els països d'origen de les músiques escoltades.</p>
+    </div>
+
+    <div class="oa-card c-analisi" onclick="showDetail(this, 'oa5')">
+      <div class="oa-card-top">
+        <div class="oa-badge">5</div>
+        <span class="oa-name">Classificació</span>
+      </div>
+      <i class="ti ti-category oa-icon" aria-hidden="true"></i>
+      <p class="oa-text">Classificar els instruments per famílies: vent, percussió, corda i elèctrics.</p>
+    </div>
+
+    <div class="oa-card c-respecte" onclick="showDetail(this, 'oa6')">
+      <div class="oa-card-top">
+        <div class="oa-badge">6</div>
+        <span class="oa-name">Respecte</span>
+      </div>
+      <i class="ti ti-heart oa-icon" aria-hidden="true"></i>
+      <p class="oa-text">Respectar i valorar les músiques d'altres cultures en el seu context i dins la nostra societat.</p>
+    </div>
+
+    <div class="oa-card c-creacio" onclick="showDetail(this, 'oa7')">
+      <div class="oa-card-top">
+        <div class="oa-badge">7</div>
+        <span class="oa-name">Producte final</span>
+      </div>
+      <i class="ti ti-device-desktop oa-icon" aria-hidden="true"></i>
+      <p class="oa-text">Crear i presentar oralment una fitxa multimèdia sobre un instrument d'una de les cultures.</p>
+    </div>
+
+  </div>
+
+  <div class="detail-panel" id="detailPanel">
+    <p class="dp-hint">Fes clic sobre un objectiu per veure'n els detalls i la connexió amb les activitats.</p>
+  </div>
+
+  <div class="final-row">
+    <div class="final-card">
+      <h4><i class="ti ti-star" aria-hidden="true"></i> Producte final</h4>
+      <p>Fitxa multimèdia sobre <strong>un instrument</strong> d'una de les sis cultures escoltades (Equador, Marroc, Índia, Bulgària, Senegal o Brasil) i presentació oral de 2–3 min.</p>
+    </div>
+    <div class="final-card">
+      <h4><i class="ti ti-world" aria-hidden="true"></i> Sis cultures</h4>
+      <p>🇪🇨 Equador · 🇲🇦 Marroc · 🇮🇳 Índia<br>🇧🇬 Bulgària · 🇸🇳 Senegal · 🇧🇷 Brasil</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const details = {
+  oa1: {
+    cat: 'Escolta',
+    catClass: 'c-escolta',
+    badgeBg: '#E1F5EE', badgeColor: '#0F6E56',
+    title: 'OA1 — Escoltar amb actitud atenta i respectuosa',
+    desc: 'Escoltar les sis agrupacions musicals instal·lades als Països Catalans provinents de l\'Equador, el Marroc, l\'Índia, Bulgària, el Senegal i el Brasil, mantenint silenci, concentració i actitud oberta.',
+    connects: 'Connecta amb CE1 (1.1, 1.2) · Treballa CC (CC1.1.2) · Present a totes les sessions 1–8'
+  },
+  oa2: {
+    cat: 'Identificació',
+    catClass: 'c-analisi',
+    badgeBg: '#E6F1FB', badgeColor: '#185FA5',
+    title: 'OA2 — Reconèixer els instruments de cada grup',
+    desc: 'A partir de les audicions i les il·lustracions del Requetetxec, identificar per nom cadascun dels instruments que intervenen en cada agrupació: charango, kora, bansuri, tabla, gaida...',
+    connects: 'Connecta amb CE1 (1.2) · Fitxes d\'anàlisi en parelles · Sessions 2–4 principalment'
+  },
+  oa3: {
+    cat: 'Sonoritat',
+    catClass: 'c-analisi',
+    badgeBg: '#E6F1FB', badgeColor: '#185FA5',
+    title: 'OA3 — Reconèixer estils i sonoritats característics',
+    desc: 'Identificar les combinacions instrumentals i els trets sonors que defineixen cada cultura: modes escalars, patrons rítmics, timbres particulars i la manera com els instruments dialoguen entre ells.',
+    connects: 'Connecta amb CE1 (1.2, 1.3) · Activitat de reconeixement sonor · Sessions 3–5'
+  },
+  oa4: {
+    cat: 'Mapa',
+    catClass: 'c-mapa',
+    badgeBg: '#EEEDFE', badgeColor: '#534AB7',
+    title: 'OA4 — Localitzar en el mapamundi',
+    desc: 'Assenyalar en el mapamundi mut els sis països d\'origen de les músiques escoltades i relacionar la seva localització geogràfica amb els processos migratoris que han portat aquells músics als Països Catalans.',
+    connects: 'Connecta amb CE1 (1.1) · CC (CC1.1.2) · Mapamundi mut individual · Sessions 1, 4 i 5'
+  },
+  oa5: {
+    cat: 'Classificació',
+    catClass: 'c-analisi',
+    badgeBg: '#E6F1FB', badgeColor: '#185FA5',
+    title: 'OA5 — Classificar per famílies instrumentals',
+    desc: 'Agrupar cada instrument escoltat en la seva família: vent (fusta o metall), percussió (membranòfons i idiòfons), corda (fregada, pinçada o percudida) o elèctrics. Construir el quadre resum col·lectiu.',
+    connects: 'Connecta amb CE1 (1.2) · Quadre resum col·lectiu · Sessions 2–5'
+  },
+  oa6: {
+    cat: 'Respecte',
+    catClass: 'c-respecte',
+    badgeBg: '#FAECE7', badgeColor: '#993C1D',
+    title: 'OA6 — Respectar i valorar les músiques d\'altres cultures',
+    desc: 'Adoptar una mirada crítica i empàtica cap a les músiques d\'altres cultures, tant en el seu context d\'origen com dins de la societat catalana. Reflexionar sobre el paper de la música en la construcció d\'una societat intercultural.',
+    connects: 'Connecta amb CE1 (1.3) · CC (CC3.3.3) · Diari d\'aprenentatge · Totes les sessions'
+  },
+  oa7: {
+    cat: 'Producte final',
+    catClass: 'c-creacio',
+    badgeBg: '#FAEEDA', badgeColor: '#854F0B',
+    title: 'OA7 — Crear i presentar la fitxa multimèdia',
+    desc: 'Investigar un instrument d\'una de les sis cultures (nom, família, país, descripció del so, presència als Països Catalans, imatge o vídeo) i presentar-lo oralment a la classe en 2–3 minuts, amb suport digital.',
+    connects: 'Connecta amb CE4 (4.1, 4.2) · CD (2.1, 2.2) · Sessions 5–8 · Producte final avaluable'
+  }
+};
+
+function showDetail(card, key) {
+  document.querySelectorAll('.oa-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  const d = details[key];
+  const panel = document.getElementById('detailPanel');
+  panel.innerHTML = `
+    <span class="dp-badge" style="background:${d.badgeBg};color:${d.badgeColor}">${d.cat}</span>
+    <h3>${d.title}</h3>
+    <p>${d.desc}</p>
+    <span class="dp-connects">${d.connects}</span>
+  `;
+}
+</script>
