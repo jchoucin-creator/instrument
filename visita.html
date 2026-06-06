@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expedició Sonora · Hornbostel & Sachs</title>
+<style>
+  :root{
+    --bg:#0f1320; --bg2:#161c2e; --panel:#1c2336; --panel2:#232c44;
+    --ink:#eef1f8; --muted:#9aa6c4; --line:#2e3852;
+    --gold:#e8b84b; --gold-d:#b88a1f;
+    --teal:#3fc8a0; --coral:#e87a52; --violet:#8f7be0; --blue:#5aa9f0; --rose:#e26d97;
+    --ok:#5fd08a; --bad:#ef6b6b;
+    --radius:16px; --radius-s:10px;
+    --font:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+    --display:"Trebuchet MS","Segoe UI",sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f4f1e8; --bg2:#ece7d8; --panel:#ffffff; --panel2:#f7f4ec;
+      --ink:#23282f; --muted:#5f6470; --line:#dad3c2;
+      --gold:#b88a1f; --gold-d:#8a6712;
+    }
+  }
+  body.light{
+    --bg:#f4f1e8; --bg2:#ece7d8; --panel:#ffffff; --panel2:#f7f4ec;
+    --ink:#23282f; --muted:#5f6470; --line:#dad3c2;
+    --gold:#b88a1f; --gold-d:#8a6712;
+  }
+  body.dark{
+    --bg:#0f1320; --bg2:#161c2e; --panel:#1c2336; --panel2:#232c44;
+    --ink:#eef1f8; --muted:#9aa6c4; --line:#2e3852;
+    --gold:#e8b84b; --gold-d:#b88a1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--font); background:var(--bg); color:var(--ink);
+    min-height:100vh; line-height:1.6;
+    background-image:radial-gradient(circle at 12% 18%, rgba(143,123,224,.10), transparent 42%),
+                     radial-gradient(circle at 88% 12%, rgba(63,200,160,.10), transparent 40%),
+                     radial-gradient(circle at 50% 100%, rgba(232,184,75,.08), transparent 50%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 80px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:bold;letter-spacing:.5px;}
+  .brand .badge{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold-d));
+    display:flex;align-items:center;justify-content:center;color:#1a1206;font-weight:bold;font-size:18px;}
+  .brand small{display:block;font-weight:normal;color:var(--muted);letter-spacing:0;font-size:11px;}
+  .tools{display:flex;gap:8px;}
+  .icon-btn{background:var(--panel);border:1px solid var(--line);color:var(--ink);
+    border-radius:9px;padding:7px 11px;cursor:pointer;font-size:13px;font-family:inherit;transition:.15s;}
+  .icon-btn:hover{border-color:var(--gold);}
+  .icon-btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 24px;box-shadow:0 14px 40px rgba(0,0,0,.18);}
+  h1{font-family:var(--display);font-size:27px;line-height:1.2;margin-bottom:8px;}
+  h2{font-family:var(--display);font-size:21px;margin-bottom:10px;}
+  h3{font-size:15px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  p{margin-bottom:12px;}
+  .lead{color:var(--muted);}
+
+  .field{margin:18px 0;}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+  input[type=text]{width:100%;padding:13px 14px;border-radius:var(--radius-s);
+    border:1px solid var(--line);background:var(--panel2);color:var(--ink);font-size:16px;font-family:inherit;}
+  input[type=text]:focus-visible{outline:3px solid var(--blue);outline-offset:1px;border-color:var(--blue);}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;
+    background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#1a1206;border:none;
+    padding:13px 22px;border-radius:var(--radius-s);font-weight:bold;font-size:15px;cursor:pointer;
+    font-family:inherit;transition:transform .12s,filter .12s;}
+  .btn:hover{filter:brightness(1.07);} .btn:active{transform:scale(.97);}
+  .btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);}
+  .btn[disabled]{opacity:.45;cursor:not-allowed;filter:none;transform:none;}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+  /* progress / map */
+  .hud{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+  .progress{flex:1;min-width:160px;height:12px;background:var(--panel2);border-radius:20px;overflow:hidden;border:1px solid var(--line);}
+  .progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .5s;}
+  .score-chip{background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-weight:bold;font-size:14px;}
+  .seals{display:flex;gap:7px;}
+  .seal{width:30px;height:30px;border-radius:50%;border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:15px;opacity:.4;transition:.3s;}
+  .seal.got{opacity:1;border-style:solid;border-color:var(--gold);background:rgba(232,184,75,.15);transform:scale(1.05);}
+
+  .fam-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+  .fam-emoji{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;}
+  .fam-meta small{color:var(--muted);font-size:12px;}
+
+  .doc{background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--accent,var(--gold));
+    border-radius:var(--radius-s);padding:16px 18px;margin:14px 0;}
+  .doc h4{font-size:14px;color:var(--accent,var(--gold));margin-bottom:4px;}
+  .doc ul{margin:6px 0 4px 18px;} .doc li{margin-bottom:5px;}
+  .doc .q{font-weight:bold;}
+  .readnote{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;margin-top:6px;}
+
+  .qbox{margin-top:10px;}
+  .qnum{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  .qtext{font-size:18px;font-weight:bold;margin:6px 0 14px;}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1.5px solid var(--line);
+    color:var(--ink);border-radius:var(--radius-s);padding:13px 16px;margin-bottom:9px;cursor:pointer;
+    font-size:15px;font-family:inherit;transition:.13s;}
+  .opt:hover{border-color:var(--gold);transform:translateX(2px);}
+  .opt:focus-visible{outline:3px solid var(--blue);outline-offset:1px;}
+  .opt.correct{border-color:var(--ok);background:rgba(95,208,138,.16);}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,107,107,.14);}
+  .opt[disabled]{cursor:default;}
+  .opt .mark{font-weight:bold;margin-right:8px;}
+
+  .feedback{margin-top:8px;padding:13px 16px;border-radius:var(--radius-s);font-size:14px;display:none;}
+  .feedback.show{display:block;}
+  .feedback.good{background:rgba(95,208,138,.14);border:1px solid var(--ok);}
+  .feedback.miss{background:rgba(239,107,107,.12);border:1px solid var(--bad);}
+  .feedback b{color:var(--gold);}
+
+  /* final */
+  .result-rank{text-align:center;padding:18px 0;}
+  .result-rank .big{font-size:54px;}
+  .result-rank .rank{font-family:var(--display);font-size:26px;margin-top:6px;}
+  .codebox{background:var(--panel2);border:2px dashed var(--gold);border-radius:var(--radius-s);
+    padding:18px;text-align:center;margin:18px 0;}
+  .codebox .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+  .codebox .code{font-family:"Courier New",monospace;font-size:23px;font-weight:bold;letter-spacing:2px;
+    color:var(--gold);margin:8px 0;word-break:break-all;}
+  .copied{font-size:13px;color:var(--ok);height:18px;}
+
+  .teacher-panel{display:none;}
+  .teacher-panel.show{display:block;}
+  .teacher-login.show{display:block!important;animation:fade .3s ease;}
+  .shake{animation:shake .4s;}
+  @keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-7px);}40%,80%{transform:translateX(7px);}}
+  .decode-out{margin-top:14px;padding:16px;border-radius:var(--radius-s);background:var(--panel2);border:1px solid var(--line);display:none;}
+  .decode-out.show{display:block;}
+  .pill{display:inline-block;padding:4px 12px;border-radius:14px;font-weight:bold;font-size:14px;}
+  .pill.AE{background:rgba(95,208,138,.2);color:var(--ok);}
+  .pill.AN{background:rgba(90,169,240,.2);color:var(--blue);}
+  .pill.AS{background:rgba(232,184,75,.2);color:var(--gold);}
+  .pill.NA{background:rgba(239,107,107,.2);color:var(--bad);}
+
+  .screen{display:none;animation:fade .4s ease;}
+  .screen.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+  .confetti{position:fixed;top:-10px;width:9px;height:14px;opacity:.9;z-index:50;pointer-events:none;animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.3;}}
+
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:22px;}
+  .hidden{display:none!important;}
+</style>
+</head>
+<body class="dark">
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="badge">H&S</span>
+      <span>Expedició Sonora<small>Museu Hornbostel &amp; Sachs · Repàs</small></span>
+    </div>
+    <div class="tools">
+      <button class="icon-btn" id="themeBtn" aria-label="Canviar tema clar o fosc">🌙 Tema</button>
+      <button class="icon-btn" id="teacherBtn" aria-label="Mode professor">🔑 Professor</button>
+    </div>
+  </div>
+
+  <!-- ====== TEACHER LOGIN ====== -->
+  <div class="card teacher-login" id="teacherLogin" style="display:none;margin-bottom:18px;">
+    <h3>🔒 Accés del professorat</h3>
+    <p class="lead">El descodificador de codis és d'ús exclusiu del professorat. Introdueix el PIN docent per accedir-hi.</p>
+    <div class="field">
+      <label for="pinIn">PIN docent</label>
+      <input type="password" id="pinIn" placeholder="••••" autocomplete="off" inputmode="numeric">
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="pinBtn">Entrar</button>
+      <button class="btn ghost" id="pinCancel">Cancel·lar</button>
+    </div>
+    <p id="pinErr" style="color:var(--bad);font-size:13px;margin-top:10px;display:none;">PIN incorrecte. Torna-ho a provar.</p>
+  </div>
+
+  <!-- ====== TEACHER PANEL ====== -->
+  <div class="card teacher-panel" id="teacherPanel" style="margin-bottom:18px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <span style="font-size:12px;color:var(--ok);">✓ Sessió docent activa</span>
+      <button class="icon-btn" id="lockBtn" aria-label="Tancar sessió docent">🔒 Tancar</button>
+    </div>
+    <h3>Mode professor · Descodificador</h3>
+    <p class="lead">Enganxa el <b>codi de registre</b> que t'ha lliurat l'alumne/a per veure el nom, la puntuació real i el nivell d'assoliment. L'eina avisa si el codi ha estat manipulat o copiat d'un altre alumne.</p>
+    <div class="field">
+      <label for="decodeIn">Codi de registre</label>
+      <input type="text" id="decodeIn" placeholder="HS-NOM-XXXXXXXX" autocomplete="off">
+    </div>
+    <button class="btn" id="decodeBtn">Descodificar</button>
+    <div class="decode-out" id="decodeOut"></div>
+  </div>
+
+  <!-- ====== SCREEN: START ====== -->
+  <div class="screen active" id="screen-start">
+    <div class="card">
+      <h1>🎵 Expedició Sonora pel Museu H&amp;S</h1>
+      <p class="lead">Les etiquetes del museu s'han barrejat! La teva missió: recórrer les <b>cinc sales</b> de la classificació Hornbostel &amp; Sachs, llegir la fitxa de cada família i superar-ne les proves per recuperar els cinc segells. Al final t'espera la <b>Sala dels Enigmes</b>.</p>
+      <div class="doc" style="--accent:var(--teal);">
+        <h4>Com funciona</h4>
+        <ul>
+          <li>A cada sala, <b>llegeix bé la fitxa</b> abans de respondre: les preguntes surten del text.</li>
+          <li>Cada encert et dóna energia sonora. Respon amb calma: no pots tornar enrere.</li>
+          <li>En acabar rebràs un <b>codi de registre únic</b> que has d'entregar al professor/a per Classroom.</li>
+          <li>Durada aproximada: <b>1 hora</b>. Treballa de manera autònoma.</li>
+        </ul>
+      </div>
+      <div class="field">
+        <label for="nameIn">Escriu el teu nom i cognom (tal com et registres a classe)</label>
+        <input type="text" id="nameIn" placeholder="Ex. Maria Puig" autocomplete="off" maxlength="40">
+      </div>
+      <button class="btn" id="startBtn">Comença l'expedició →</button>
+      <p id="nameErr" style="color:var(--bad);font-size:13px;margin-top:8px;display:none;">Escriu el teu nom per començar.</p>
+    </div>
+    <p class="foot">Museu Sonor Hornbostel &amp; Sachs · Música · ESO</p>
+  </div>
+
+  <!-- ====== SCREEN: GAME ====== -->
+  <div class="screen" id="screen-game">
+    <div class="hud">
+      <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+      <div class="score-chip" id="energyChip">⚡ 0</div>
+      <div class="seals" id="seals" aria-label="Segells recuperats"></div>
+    </div>
+    <div class="card" id="stage"></div>
+  </div>
+
+  <!-- ====== SCREEN: END ====== -->
+  <div class="screen" id="screen-end">
+    <div class="card">
+      <h2>🏛️ Expedició completada</h2>
+      <div class="result-rank">
+        <div class="big" id="rankEmoji">🎤</div>
+        <div class="rank" id="rankName">Solista</div>
+        <p class="lead" id="rankMsg" style="margin-top:8px;"></p>
+      </div>
+      <div class="codebox">
+        <div class="lbl">El teu codi de registre · entrega'l al professor/a</div>
+        <div class="code" id="finalCode">—</div>
+        <button class="btn ghost" id="copyBtn">📋 Copiar el codi</button>
+        <div class="copied" id="copiedMsg"></div>
+      </div>
+      <p class="lead" style="font-size:13px;">Aquest codi és únic i conté el teu nom. No serveix per a cap altre alumne. Sense aquest codi, el professor/a no pot validar que has acabat l'expedició.</p>
+    </div>
+    <p class="foot">Gràcies per visitar el Museu Sonor 🎶</p>
+  </div>
+
+</div>
+
+<script>
+/* ============ DADES (text de la fitxa H&S_prof) ============ */
+const FAMILIES = [
+  {
+    id:"cord", name:"Cordòfons", emoji:"🎻", year:"H&S, 1914", accent:"var(--teal)", seal:"🎻",
+    bg:"rgba(63,200,160,.18)",
+    doc:[
+      {h:"Què vibra?", t:"Una o més <b>cordes tensades</b> entre dos punts."},
+      {h:"Tipus", t:"<b>Simples (cítares):</b> l'instrument és bàsicament un suport per a les cordes (salteri). &nbsp; <b>Compostos:</b> tenen un mànec o estructura integrada (violins, guitarres)."},
+      {h:"Com es fa vibrar?", t:"<b>Puntejant</b> (arpa, guitarra, llaüt) · <b>Fregant</b> (violoncel, violí, viola) · <b>Percudint</b> (piano)."}
+    ],
+    qs:[
+      {q:"Segons la fitxa, què vibra en un cordòfon?", o:["Una columna d'aire dins d'un tub","Una o més cordes tensades entre dos punts","El propi cos sòlid de l'instrument","Una membrana estirada"], a:1,
+       e:"El text ho diu literalment: vibren cordes tensades entre dos punts."},
+      {q:"Quin tipus de cordòfon és «bàsicament un suport per a les cordes», com el salteri?", o:["Compost","Simple (cítara)","Mixt","De broquet"], a:1,
+       e:"Els simples o cítares no tenen mànec: l'instrument només sosté les cordes (salteri)."},
+      {q:"Com es fa sonar la corda en el piano, segons la fitxa?", o:["Puntejant-la","Fregant-la amb un arc","Percudint-la","Bufant-hi aire"], a:2,
+       e:"La fitxa classifica el piano dins «Percudint»: uns martells colpegen les cordes."}
+    ]
+  },
+  {
+    id:"aero", name:"Aeròfons", emoji:"🎺", year:"H&S, 1914", accent:"var(--blue)", seal:"🎺",
+    bg:"rgba(90,169,240,.18)",
+    doc:[
+      {h:"Què vibra?", t:"Una <b>columna d'aire</b>. <b>Lliures:</b> l'aire no està confinat en un tub (harmònica, acordió). <b>«De vent»:</b> l'aire vibra dins d'un tub."},
+      {h:"Com es fa vibrar?", t:"<b>Bisell:</b> l'aire xoca contra un bisell (flautes) · <b>Llengüeta:</b> bufant una canya, simple (clarinet) o doble (oboè) · <b>Broquet:</b> vibren els llavis de l'intèrpret (trompeta)."}
+    ],
+    qs:[
+      {q:"Quina és la diferència entre un aeròfon «lliure» i un «de vent»?", o:["El lliure no té embocadura i el de vent sí","En el lliure l'aire no està confinat en un tub; en el de vent, sí","El lliure és de metall i el de vent de fusta","El lliure és antic i el de vent modern"], a:1,
+       e:"La fitxa: lliures = aire no confinat en tub (harmònica, acordió); de vent = l'aire vibra dins d'un tub."},
+      {q:"En quin instrument fa sonar l'aire la vibració dels llavis de l'intèrpret (broquet)?", o:["La flauta","El clarinet","La trompeta","L'oboè"], a:2,
+       e:"El broquet fa vibrar els llavis: és el cas de la trompeta."},
+      {q:"Segons la fitxa, l'oboè produeix el so amb...", o:["Un bisell","Una llengüeta simple","Una llengüeta doble","Un broquet"], a:2,
+       e:"El text distingeix llengüeta simple (clarinet) i doble (oboè)."}
+    ]
+  },
+  {
+    id:"mem", name:"Membranòfons", emoji:"🥁", year:"H&S, 1914", accent:"var(--coral)", seal:"🥁",
+    bg:"rgba(232,122,82,.18)",
+    doc:[
+      {h:"Què vibra?", t:"Una <b>membrana</b> (pell o plàstic) estirada i tensada sobre una obertura."},
+      {h:"Com es fa vibrar?", t:"<b>Percudint:</b> colpejant amb la mà o baquetes (timbales, tambors) · <b>Puntejant:</b> una corda lligada a la membrana que, en ser polsada, la fa vibrar · <b>Fregant:</b> la membrana o una vareta en contacte (ximbomba) · <b>Mirlitons:</b> la membrana vibra per la ressonància de la veu humana (kazoo)."}
+    ],
+    qs:[
+      {q:"Què ha de tenir un instrument per ser membranòfon, segons la fitxa?", o:["Cordes tensades","Una columna d'aire","Una membrana estirada sobre una obertura","Un cos metàl·lic massís"], a:2,
+       e:"Vibra una membrana (pell o plàstic) tensada sobre una obertura."},
+      {q:"El kazoo apareix a la fitxa com a exemple de quin subtipus?", o:["Percudint","Fregant","Mirliton","Puntejant"], a:2,
+       e:"En els mirlitons la membrana vibra per la ressonància de la veu humana (kazoo)."},
+      {q:"Com es fa sonar la ximbomba segons el text?", o:["Percudint la pell amb baquetes","Fregant una vareta en contacte amb la membrana","Bufant per un tub","Sacsejant-la"], a:1,
+       e:"La fitxa situa la ximbomba dins «Fregant»: una vareta frega la membrana."}
+    ]
+  },
+  {
+    id:"idio", name:"Idiòfons", emoji:"🔔", year:"H&S, 1914", accent:"var(--gold)", seal:"🔔",
+    bg:"rgba(232,184,75,.18)",
+    doc:[
+      {h:"Què vibra?", t:"El <b>propi cos</b> de l'instrument."},
+      {h:"Com es fa vibrar?", t:"<b>Percudint</b> amb baquetes, maces o entre si (xilòfon, plats) · <b>Puntejant</b> (guimbarda) · <b>Fregant</b> (harmònica de vidre) · <b>Sacsejant:</b> les parts internes xoquen entre si (maraques)."}
+    ],
+    qs:[
+      {q:"Què vibra en un idiòfon?", o:["Una membrana","El propi cos de l'instrument","Una corda","L'aire d'un tub"], a:1,
+       e:"En els idiòfons sona el material del propi instrument."},
+      {q:"Segons la fitxa, com es fan sonar les maraques?", o:["Percudint-les amb baquetes","Fregant-les","Sacsejant-les: les parts internes xoquen entre si","Puntejant-les"], a:2,
+       e:"El text: sacsejant, les parts internes xoquen entre si (maraques)."},
+      {q:"La guimbarda apareix com a exemple de quin subtipus d'idiòfon?", o:["Percudint","Puntejant","Fregant","Sacsejant"], a:1,
+       e:"La fitxa situa la guimbarda dins «Puntejant»."}
+    ]
+  },
+  {
+    id:"elec", name:"Electròfons", emoji:"🎹", year:"H&S, 1940", accent:"var(--violet)", seal:"🎹",
+    bg:"rgba(143,123,224,.18)",
+    doc:[
+      {h:"Què vibra?", t:"El so es produeix mitjançant <b>osciladors electrònics</b> o s'<b>amplifica elèctricament</b>. (Categoria afegida el <b>1940</b>.)"},
+      {h:"Com vibra?", t:"<b>Radioelèctrics:</b> el so es crea totalment de forma elèctrica (sintetitzador) · <b>Electromecànics:</b> hi ha un element mecànic que vibra i es transforma en senyal elèctric (orgue Hammond) · <b>Electroacústics:</b> l'instrument acústic s'amplifica (guitarra elèctrica)."}
+    ],
+    qs:[
+      {q:"En quin any es va afegir la família dels electròfons al sistema?", o:["1914","1928","1940","1960"], a:2,
+       e:"Les capçaleres de la fitxa marquen 1914 per a les quatre famílies originals i 1940 per als electròfons."},
+      {q:"L'orgue Hammond apareix com a exemple de quin subtipus?", o:["Radioelèctric","Electromecànic","Electroacústic","Aeròfon lliure"], a:1,
+       e:"Electromecànic: un element mecànic vibra i es transforma en senyal elèctric."},
+      {q:"Quin subtipus descriu un instrument acústic que simplement s'amplifica, com la guitarra elèctrica?", o:["Radioelèctric","Electromecànic","Electroacústic","Mirliton"], a:2,
+       e:"Electroacústic: l'instrument acústic s'amplifica (guitarra elèctrica)."}
+    ]
+  }
+];
+
+/* Sala final dels enigmes (síntesi, exigeix integrar tot el document) */
+const BOSS = [
+  {q:"El criteri que fa servir Hornbostel & Sachs per classificar QUALSEVOL instrument és...", o:["El material de què està fet","La forma exterior","El mecanisme de producció del so (què vibra i com)","El país d'origen"], a:2,
+   e:"És un sistema universal: classifica segons com es produeix el so, no pel material ni l'origen cultural."},
+  {q:"Tot i tenir teclat, el piano NO és un electròfon. Per què?", o:["Perquè és antic","Perquè el so neix de cordes percudides per martells: és un cordòfon","Perquè no necessita endoll","Perquè és un idiòfon"], a:1,
+   e:"El piano vibra per cordes percudides → cordòfon (percudint), com indica la fitxa."},
+  {q:"Quina afirmació resumeix millor el document?", o:["Només els instruments europeus es poden classificar amb H&S","H&S ordena els instruments en 5 famílies segons què vibra: cordes, aire, membrana, cos propi o electricitat","Tots els instruments de percussió són membranòfons","Els electròfons van substituir les altres famílies"], a:1,
+   e:"Cinc famílies segons l'element que vibra, vàlides per a qualsevol cultura."}
+];
+
+/* ============ SECRET / CODI ============
+   El codi entrega NOM + puntuació xifrada amb una clau derivada del nom + checksum.
+   L'alumnat veu un rang temàtic (no la nota); el professor descodifica la nota real. */
+const SALT = 7349; // canvia aquest número si vols un joc de codis privat del teu centre
+
+function cleanName(raw){
+  return (raw||"").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^A-Z0-9]/g,"").slice(0,14) || "ALUMNE";
+}
+function nameSeed(clean){
+  let s=SALT; for(const c of clean) s=(s*31 + c.charCodeAt(0))%100000; return s;
+}
+function makeCode(rawName, pct){
+  const clean=cleanName(rawName);
+  const seed=nameSeed(clean);
+  const k=seed%97;
+  const enc=(pct + k)%101;                 // 0..100 ocult
+  const d=String(enc).padStart(3,"0");
+  const chk=(seed*131 + enc*977)%1296;     // checksum de 2 caràcters base36
+  const chkStr=chk.toString(36).toUpperCase().padStart(2,"0");
+  const N="QWRTPSDFGHJKLZXBNM";
+  const n1=N[seed%N.length], n2=N[(seed*5+enc)%N.length], n3=N[(seed*9+k)%N.length];
+  const token=n1+d[0]+n2+d[1]+n3+d[2]+chkStr; // 8 caràcters
+  return "HS-"+clean+"-"+token;
+}
+function decodeCode(code){
+  const m=(code||"").trim().toUpperCase().match(/^HS-([A-Z0-9]+)-([A-Z0-9]{8})$/);
+  if(!m) return {valid:false,reason:"Format incorrecte. Ha de ser HS-NOM-XXXXXXXX."};
+  const clean=m[1], t=m[2];
+  const seed=nameSeed(clean);
+  const k=seed%97;
+  const d=t[1]+t[3]+t[5];
+  if(!/^[0-9]{3}$/.test(d)) return {valid:false,reason:"Token il·legible."};
+  const enc=parseInt(d,10);
+  if(enc<0||enc>100) return {valid:false,reason:"Codi manipulat (valor fora de rang)."};
+  const chk=(seed*131 + enc*977)%1296;
+  if(t.slice(6)!==chk.toString(36).toUpperCase().padStart(2,"0"))
+    return {valid:false,reason:"Checksum no vàlid: el codi ha estat manipulat o copiat d'un altre alumne."};
+  const pct=((enc-k)%101+101)%101;
+  return {valid:true,name:clean,pct};
+}
+function band(pct){
+  if(pct>=90) return {code:"AE",label:"Assoliment Excel·lent"};
+  if(pct>=70) return {code:"AN",label:"Assoliment Notable"};
+  if(pct>=50) return {code:"AS",label:"Assoliment Satisfactori"};
+  return {code:"NA",label:"No assolit encara"};
+}
+/* rang temàtic mostrat a l'alumne (no revela la nota exacta) */
+function rank(pct){
+  if(pct>=90) return {emoji:"🎤",name:"Solista",msg:"Domines la classificació H&S de cap a peus. Has llegit i comprès tot el document!"};
+  if(pct>=70) return {emoji:"🎼",name:"Intèrpret",msg:"Molt bon recorregut pel museu. Tens els conceptes ben travats."};
+  if(pct>=50) return {emoji:"🎶",name:"Assaig",msg:"Vas pel bon camí. Rellegeix les fitxes de les sales que t'han costat més."};
+  return {emoji:"🎵",name:"Primer contacte",msg:"Comença el viatge! Torna a llegir el document amb calma: les respostes hi són totes."};
+}
+
+/* ============ ESTAT DEL JOC ============ */
+let studentName="", correct=0, total=0, idx=0, stageType="readF", famI=0, qI=0, bossI=0, answered=false;
+const totalQs = FAMILIES.reduce((a,f)=>a+f.qs.length,0) + BOSS.length;
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0);}
+
+/* seals init */
+function initSeals(){
+  $("seals").innerHTML="";
+  FAMILIES.forEach((f,i)=>{
+    const d=document.createElement("div");
+    d.className="seal"; d.id="seal-"+i; d.textContent=f.seal; d.setAttribute("aria-label",f.name);
+    $("seals").appendChild(d);
+  });
+}
+function updateHUD(){
+  $("bar").style.width=Math.round((total/totalQs)*100)+"%";
+  $("energyChip").textContent="⚡ "+(correct*10);
+}
+
+/* ============ FLUX ============ */
+$("startBtn").onclick=()=>{
+  const v=$("nameIn").value.trim();
+  if(!v){$("nameErr").style.display="block";return;}
+  studentName=v; correct=0; total=0; famI=0; qI=0; bossI=0;
+  initSeals(); updateHUD(); show("screen-game"); renderReading();
+};
+$("nameIn").addEventListener("keydown",e=>{if(e.key==="Enter")$("startBtn").click();});
+
+function renderReading(){
+  const f=FAMILIES[famI];
+  document.body.style.setProperty("--accent",f.accent);
+  let docHtml=f.doc.map(d=>`<div style="margin-bottom:8px;"><span class="q" style="color:${f.accent}">${d.h}</span> ${d.t}</div>`).join("");
+  $("stage").innerHTML=`
+    <div class="fam-head">
+      <div class="fam-emoji" style="background:${f.bg}">${f.emoji}</div>
+      <div class="fam-meta"><h2>Sala ${famI+1}: ${f.name}</h2><small>${f.year}</small></div>
+    </div>
+    <h3 style="color:${f.accent}">📖 Fitxa del museu — llegeix-la abans de continuar</h3>
+    <div class="doc" style="--accent:${f.accent}">${docHtml}</div>
+    <p class="readnote">⏳ <span id="gateTxt">Llegeix amb atenció… (el botó s'activarà en uns segons)</span></p>
+    <button class="btn" id="readDone" disabled>Començar les proves de la sala →</button>
+  `;
+  let sec=5;
+  const gate=$("gateTxt"), btn=$("readDone");
+  const tick=setInterval(()=>{
+    sec--;
+    if(sec<=0){clearInterval(tick);btn.disabled=false;gate.textContent="Ja pots començar quan vulguis.";}
+    else gate.textContent="Llegeix amb atenció… ("+sec+")";
+  },1000);
+  btn.onclick=()=>{qI=0;renderQuestion();};
+}
+
+function renderQuestion(){
+  answered=false;
+  const f=FAMILIES[famI], q=f.qs[qI];
+  $("stage").innerHTML=`
+    <div class="fam-head">
+      <div class="fam-emoji" style="background:${f.bg}">${f.emoji}</div>
+      <div class="fam-meta"><h2>${f.name}</h2><small>Prova ${qI+1} de ${f.qs.length}</small></div>
+    </div>
+    <div class="qbox">
+      <div class="qnum">Pregunta</div>
+      <div class="qtext">${q.q}</div>
+      <div id="opts"></div>
+      <div class="feedback" id="fb"></div>
+      <div class="btn-row" id="nextRow" style="display:none;">
+        <button class="btn" id="nextBtn">Continuar →</button>
+      </div>
+    </div>`;
+  const opts=$("opts");
+  q.o.forEach((txt,i)=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.innerHTML=`<span class="mark">${String.fromCharCode(65+i)}</span>${txt}`;
+    b.onclick=()=>answer(i,b,q);
+    opts.appendChild(b);
+  });
+}
+
+function answer(i,btn,q){
+  if(answered) return; answered=true; total++;
+  const opts=[...document.querySelectorAll(".opt")];
+  opts.forEach(o=>o.disabled=true);
+  const fb=$("fb");
+  if(i===q.a){
+    correct++; btn.classList.add("correct");
+    fb.className="feedback good show"; fb.innerHTML="✅ <b>Correcte!</b> "+q.e;
+  }else{
+    btn.classList.add("wrong"); opts[q.a].classList.add("correct");
+    fb.className="feedback miss show"; fb.innerHTML="❌ La resposta és <b>"+String.fromCharCode(65+q.a)+"</b>. "+q.e;
+  }
+  updateHUD();
+  $("nextRow").style.display="flex";
+  $("nextBtn").focus();
+  $("nextBtn").onclick=advance;
+}
+
+function advance(){
+  const f=FAMILIES[famI];
+  qI++;
+  if(qI<f.qs.length){renderQuestion();return;}
+  // sala completada → segell
+  const s=$("seal-"+famI); if(s)s.classList.add("got");
+  famI++;
+  if(famI<FAMILIES.length){renderReading();return;}
+  // sala final
+  renderBossIntro();
+}
+
+function renderBossIntro(){
+  document.body.style.setProperty("--accent","var(--gold)");
+  $("stage").innerHTML=`
+    <div class="fam-head">
+      <div class="fam-emoji" style="background:rgba(232,184,75,.18)">🗝️</div>
+      <div class="fam-meta"><h2>Sala dels Enigmes</h2><small>Repte final · síntesi de tot el museu</small></div>
+    </div>
+    <p class="lead">Has recuperat els cinc segells! 🎉 Ara, tres enigmes finals que barregen tot el que has llegit. No hi ha fitxa: pensa-hi bé.</p>
+    <button class="btn" id="bossStart">Afrontar els enigmes →</button>`;
+  $("bossStart").onclick=()=>{bossI=0;renderBoss();};
+}
+function renderBoss(){
+  answered=false;
+  const q=BOSS[bossI];
+  $("stage").innerHTML=`
+    <div class="fam-head">
+      <div class="fam-emoji" style="background:rgba(232,184,75,.18)">🗝️</div>
+      <div class="fam-meta"><h2>Sala dels Enigmes</h2><small>Enigma ${bossI+1} de ${BOSS.length}</small></div>
+    </div>
+    <div class="qbox">
+      <div class="qnum">Enigma</div>
+      <div class="qtext">${q.q}</div>
+      <div id="opts"></div>
+      <div class="feedback" id="fb"></div>
+      <div class="btn-row" id="nextRow" style="display:none;">
+        <button class="btn" id="nextBtn">Continuar →</button>
+      </div>
+    </div>`;
+  const opts=$("opts");
+  q.o.forEach((txt,i)=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.innerHTML=`<span class="mark">${String.fromCharCode(65+i)}</span>${txt}`;
+    b.onclick=()=>answerBoss(i,b,q);
+    opts.appendChild(b);
+  });
+}
+function answerBoss(i,btn,q){
+  if(answered) return; answered=true; total++;
+  const opts=[...document.querySelectorAll(".opt")];
+  opts.forEach(o=>o.disabled=true);
+  const fb=$("fb");
+  if(i===q.a){correct++;btn.classList.add("correct");fb.className="feedback good show";fb.innerHTML="✅ <b>Correcte!</b> "+q.e;}
+  else{btn.classList.add("wrong");opts[q.a].classList.add("correct");fb.className="feedback miss show";fb.innerHTML="❌ La resposta és <b>"+String.fromCharCode(65+q.a)+"</b>. "+q.e;}
+  updateHUD();
+  $("nextRow").style.display="flex"; $("nextBtn").focus();
+  $("nextBtn").onclick=()=>{bossI++; if(bossI<BOSS.length) renderBoss(); else finish();};
+}
+
+function finish(){
+  const pct=Math.round((correct/totalQs)*100);
+  const r=rank(pct);
+  $("rankEmoji").textContent=r.emoji;
+  $("rankName").textContent=r.name;
+  $("rankMsg").textContent=r.msg;
+  $("finalCode").textContent=makeCode(studentName,pct);
+  show("screen-end");
+  if(pct>=50) confetti();
+}
+
+/* ============ COPIAR ============ */
+$("copyBtn").onclick=()=>{
+  const code=$("finalCode").textContent;
+  const done=()=>{$("copiedMsg").textContent="✓ Codi copiat. Enganxa'l a Google Classroom.";};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(code).then(done).catch(fallback);}
+  else fallback();
+  function fallback(){
+    const t=document.createElement("textarea");t.value=code;document.body.appendChild(t);t.select();
+    try{document.execCommand("copy");done();}catch(e){$("copiedMsg").textContent="Selecciona el codi i copia'l manualment.";}
+    document.body.removeChild(t);
+  }
+};
+
+/* ============ TEMA ============ */
+$("themeBtn").onclick=()=>{
+  const light=document.body.classList.toggle("light");
+  document.body.classList.toggle("dark",!light);
+  $("themeBtn").textContent = light ? "☀️ Tema" : "🌙 Tema";
+};
+
+/* ============ MODE PROFESSOR (amb PIN) ============ */
+/* PIN docent per defecte: 1914  (canvia el PIN generant un nou hash; vegeu nota al final) */
+const TEACHER_PIN_HASH = "942e0a4f";
+let teacherUnlocked = false;
+
+function hashPin(p){
+  let h=2166136261>>>0;
+  const s="HS-DECODER-SALT-"+(p||"");
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}
+  for(let r=0;r<5;r++){h^=h>>>13;h=Math.imul(h,16777619)>>>0;}
+  return h.toString(16).padStart(8,"0");
+}
+
+$("teacherBtn").onclick=()=>{
+  if(teacherUnlocked){
+    $("teacherPanel").classList.toggle("show");
+    if($("teacherPanel").classList.contains("show"))$("decodeIn").focus();
+  }else{
+    const lg=$("teacherLogin");
+    lg.classList.toggle("show");
+    if(lg.classList.contains("show")){$("pinErr").style.display="none";$("pinIn").value="";$("pinIn").focus();}
+  }
+};
+function tryPin(){
+  if(hashPin($("pinIn").value)===TEACHER_PIN_HASH){
+    teacherUnlocked=true;
+    $("teacherLogin").classList.remove("show");
+    $("teacherPanel").classList.add("show");
+    $("decodeIn").focus();
+  }else{
+    $("pinErr").style.display="block";
+    $("teacherLogin").classList.add("shake");
+    setTimeout(()=>$("teacherLogin").classList.remove("shake"),420);
+    $("pinIn").value="";$("pinIn").focus();
+  }
+}
+$("pinBtn").onclick=tryPin;
+$("pinIn").addEventListener("keydown",e=>{if(e.key==="Enter")tryPin();});
+$("pinCancel").onclick=()=>{$("teacherLogin").classList.remove("show");$("pinIn").value="";$("pinErr").style.display="none";};
+$("lockBtn").onclick=()=>{
+  teacherUnlocked=false;
+  $("teacherPanel").classList.remove("show");
+  $("decodeOut").classList.remove("show");
+  $("decodeIn").value="";
+};
+
+$("decodeBtn").onclick=()=>{
+  if(!teacherUnlocked) return;
+  const res=decodeCode($("decodeIn").value);
+  const out=$("decodeOut"); out.classList.add("show");
+  if(!res.valid){out.innerHTML=`<b style="color:var(--bad)">⚠️ ${res.reason}</b>`;return;}
+  const b=band(res.pct);
+  out.innerHTML=`
+    <div style="margin-bottom:6px;"><span style="color:var(--muted);font-size:13px;">Alumne/a registrat</span><br><b style="font-size:18px;">${res.name}</b></div>
+    <div style="margin-bottom:6px;"><span style="color:var(--muted);font-size:13px;">Puntuació</span><br><b style="font-size:22px;color:var(--gold)">${res.pct}%</b> &nbsp; (${Math.round(res.pct/100*23)} encerts aprox. de 23)</div>
+    <div><span style="color:var(--muted);font-size:13px;">Nivell d'assoliment</span><br><span class="pill ${b.code}">${b.code} · ${b.label}</span></div>
+    <div style="margin-top:8px;color:var(--ok);font-size:13px;">✓ Codi vàlid i lligat a aquest nom.</div>`;
+};
+$("decodeIn").addEventListener("keydown",e=>{if(e.key==="Enter")$("decodeBtn").click();});
+
+/* ============ CONFETI ============ */
+function confetti(){
+  const cols=["#e8b84b","#3fc8a0","#5aa9f0","#8f7be0","#e26d97","#e87a52"];
+  for(let i=0;i<70;i++){
+    const c=document.createElement("div");c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=cols[i%cols.length];
+    c.style.animationDuration=(2.2+Math.random()*1.8)+"s";
+    c.style.animationDelay=(Math.random()*.6)+"s";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4800);
+  }
+}
+</script>
+</body>
+</html>
